@@ -30,8 +30,14 @@ typedef struct t_philo
 	long long		start;
 	pthread_mutex_t	write;
 	int				must_eat;
+	int				is_dead;
 	pthread_mutex_t	*forks;
 }	t_data_philo;
+
+typedef struct s_die
+{
+	int				is_die;
+}	t_die;
 
 typedef struct s_mut_philo
 {
@@ -40,7 +46,6 @@ typedef struct s_mut_philo
 	int				right_fork;
 	int				meals;
 	pthread_mutex_t	meals_mutex;
-	int				is_dead;
 	long long		last_meal;
 	pthread_mutex_t	last_meal_mutex;
 	pthread_t		philo;
@@ -48,8 +53,7 @@ typedef struct s_mut_philo
 }	t_philos;
 
 int			put_to_struct(t_data_philo *t_data);
-void		four_args(t_data_philo *t_data);
-void		five_args(t_data_philo *t_data);
+void		start_philo(t_data_philo *t_data);
 int			ft_atoi(char *str);
 int			ft_isdigit(int c);
 void		eating(t_philos *philos, char *str);
