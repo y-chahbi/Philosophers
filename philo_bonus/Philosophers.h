@@ -34,6 +34,11 @@ typedef struct t_philo
 	pthread_mutex_t	*forks;
 }	t_data_philo;
 
+typedef struct s_die
+{
+	int				is_die;
+}	t_die;
+
 typedef struct s_mut_philo
 {
 	int				id;

@@ -33,8 +33,15 @@ int	check_if_philo_die(t_philos *philos)
 	return (0);
 }
 
-void	mywhile(t_philos *philos)
+void	*routine(void *ptr)
 {
+	t_philos	*philos;
+
+	philos = ptr;
+	philos->left_fork = philos->id;
+	philos->right_fork = (philos->id + 1) % philos->data->philosophers;
+	if (philos->id % 2 != 0)
+		usleep(1000);
 	while (1)
 	{
 		pthread_mutex_lock(&philos->data->forks[philos->left_fork]);
@@ -54,18 +61,6 @@ void	mywhile(t_philos *philos)
 		sleeping(philos);
 		thinking(philos);
 	}
-}
-
-void	*routine(void *ptr)
-{
-	t_philos	*philos;
-
-	philos = ptr;
-	philos->left_fork = philos->id;
-	philos->right_fork = (philos->id + 1) % philos->data->philosophers;
-	if (philos->id % 2 != 0)
-		usleep(1000);
-	mywhile(philos);
 	return (NULL);
 }
 
