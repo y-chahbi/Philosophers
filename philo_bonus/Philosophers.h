@@ -16,8 +16,10 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <pthread.h>
 # include <sys/time.h>
+# include <signal.h>
+# include <semaphore.h>
+# include <pthread.h>
 
 typedef struct t_philo
 {
@@ -27,27 +29,16 @@ typedef struct t_philo
 	int				die;
 	int				eat;
 	int				sleep;
-	long long		start;
-	pthread_mutex_t	write;
 	int				must_eat;
 	int				is_dead;
-	pthread_mutex_t	*forks;
 }	t_data_philo;
-
-typedef struct s_die
-{
-	int				is_die;
-}	t_die;
 
 typedef struct s_mut_philo
 {
+	long long		start;
 	int				id;
-	int				left_fork;
-	int				right_fork;
 	int				meals;
-	pthread_mutex_t	meals_mutex;
 	long long		last_meal;
-	pthread_mutex_t	last_meal_mutex;
 	pthread_t		philo;
 	t_data_philo	*data;
 }	t_philos;
@@ -56,9 +47,10 @@ int			put_to_struct(t_data_philo *t_data);
 void		start_philo(t_data_philo *t_data);
 int			ft_atoi(char *str);
 int			ft_isdigit(int c);
-void		eating(t_philos *philos, char *str);
-void		sleeping(t_philos *philos);
-void		thinking(t_philos *philos);
+void		eating(t_philos *t_data, char *str, int id);
+void		sleeping(t_philos *t_data, int id);
+void		thinking(t_philos *t_data, int id);
 long long	get_time(void);
 void		ft_usleep(long long var);
+void		ft_exit(void);
 #endif

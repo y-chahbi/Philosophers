@@ -37,13 +37,13 @@ void	mywhile(t_philos *philos)
 {
 	while (1)
 	{
+		philos->meals++;
 		pthread_mutex_lock(&philos->data->forks[philos->left_fork]);
 		eating(philos, "has taken a left fork");
 		pthread_mutex_lock(&philos->data->forks[philos->right_fork]);
 		eating(philos, "has taken a right fork");
 		eating(philos, "is eating");
 		pthread_mutex_lock(&philos->meals_mutex);
-		philos->meals++;
 		pthread_mutex_unlock(&philos->meals_mutex);
 		pthread_mutex_lock(&philos->last_meal_mutex);
 		philos->last_meal = get_time() - philos->data->start;
@@ -69,6 +69,19 @@ void	*routine(void *ptr)
 	return (NULL);
 }
 
+int	initialization(t_philos *philos, int i)
+{
+	if (pthread_mutex_init(&philos[i].last_meal_mutex, NULL))
+		return (printf("Initialization Error"), 1);
+	if (pthread_mutex_init(&philos[i].meals_mutex, NULL))
+		return (printf("Initialization Error"), 1);
+	if (pthread_create(&philos[i].philo, NULL, routine, &philos[i]))
+		return (printf("pthread_create Error"), 1);
+	if (pthread_detach(philos[i].philo))
+		return (printf("pthread_detach Error"), 1);
+	return (0);
+}
+
 void	start_philo(t_data_philo *t_data)
 {
 	int				i;
@@ -76,16 +89,19 @@ void	start_philo(t_data_philo *t_data)
 
 	i = 0;
 	philos = malloc(sizeof(t_philos) * t_data->philosophers);
+	if (!philos)
+	{
+		printf("philos allocation error");
+		return ;
+	}
 	while (t_data->philosophers > i)
 	{
 		philos[i].id = i;
 		philos[i].meals = 0;
 		philos[i].last_meal = t_data->start;
 		philos[i].data = t_data;
-		pthread_mutex_init(&philos[i].last_meal_mutex, NULL);
-		pthread_mutex_init(&philos[i].meals_mutex, NULL);
-		pthread_create(&philos[i].philo, NULL, routine, &philos[i]);
-		pthread_detach(philos[i].philo);
+		if (initialization(philos, i) != 0)
+			return ;
 		i++;
 	}
 	i = 0;

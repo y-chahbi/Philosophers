@@ -1,21 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sleeping.c                                         :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ychahbi <ychahbi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/11 01:03:36 by ychahbi           #+#    #+#             */
-/*   Updated: 2023/03/29 23:13:28 by ychahbi          ###   ########.fr       */
+/*   Created: 2023/03/26 14:08:45 by ychahbi           #+#    #+#             */
+/*   Updated: 2023/03/31 15:48:25 by ychahbi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Philosophers.h"
 
-void	sleeping(t_philos *t_data, int id)
+void	ft_exit(void)
 {
-	printf("%lld %d is sleeping\n",
-		get_time() - t_data->start,
-		id + 1);
-	ft_usleep(t_data->data->sleep);
+	kill(0, 2);
 }

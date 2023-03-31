@@ -12,78 +12,70 @@
 
 #include "../Philosophers.h"
 
-int	check_if_philo_die(t_philos *philos)
+void	*routine(void *y)
 {
-	pthread_mutex_lock(&philos->meals_mutex);
-	pthread_mutex_lock(&philos->last_meal_mutex);
-	if (philos->last_meal / philos->meals > philos->data->die)
-		philos->data->is_dead = 1;
-	if (philos->data->is_dead == 1)
-	{
-		pthread_mutex_lock(&philos->data->write);
-		printf("%lld %d is die\n",
-			get_time() - philos->data->start,
-			philos->id + 1);
-		return (1);
-	}
-	if (philos->data->must_eat != -1 && philos->meals == philos->data->must_eat)
-		return (1);
-	pthread_mutex_unlock(&philos->last_meal_mutex);
-	pthread_mutex_unlock(&philos->meals_mutex);
-	return (0);
-}
+	t_philos	*td;
+	sem_t		forkt;
 
-void	*routine(void *ptr)
-{
-	t_philos	*philos;
-
-	philos = ptr;
-	philos->left_fork = philos->id;
-	philos->right_fork = (philos->id + 1) % philos->data->philosophers;
-	if (philos->id % 2 != 0)
-		usleep(1000);
-	while (1)
+	td = y;
+	while (td->data->is_dead != 1)
 	{
-		pthread_mutex_lock(&philos->data->forks[philos->left_fork]);
-		eating(philos, "has taken a left fork");
-		pthread_mutex_lock(&philos->data->forks[philos->right_fork]);
-		eating(philos, "has taken a right fork");
-		eating(philos, "is eating");
-		pthread_mutex_lock(&philos->meals_mutex);
-		philos->meals++;
-		pthread_mutex_unlock(&philos->meals_mutex);
-		pthread_mutex_lock(&philos->last_meal_mutex);
-		philos->last_meal = get_time() - philos->data->start;
-		pthread_mutex_unlock(&philos->last_meal_mutex);
-		ft_usleep(philos->data->eat);
-		pthread_mutex_unlock(&philos->data->forks[philos->left_fork]);
-		pthread_mutex_unlock(&philos->data->forks[philos->right_fork]);
-		sleeping(philos);
-		thinking(philos);
+		if ((get_time() - td->last_meal) > td->data->die)
+		{
+			td->data->is_dead = 1;
+			sem_wait(&forkt);
+			printf("%lld %d is die\n",
+				get_time() - td->start,
+				td->id + 1);
+			ft_exit();
+		}
+		if (td->data->must_eat != -1 && td->meals == td->data->must_eat)
+			ft_exit();
 	}
 	return (NULL);
 }
 
 void	start_philo(t_data_philo *t_data)
 {
-	int				i;
-	t_philos		*philos;
+	int			i;
+	sem_t		*forks;
+	t_philos	*philo;
 
+	sem_unlink("/sem");
+	philo = malloc(sizeof(t_philos) * t_data->philosophers);
+	forks = sem_open("/sem", O_CREAT, 0644, t_data->philosophers);
 	i = 0;
-	philos = malloc(sizeof(t_philos) * t_data->philosophers);
-	while (t_data->philosophers > i)
+	while (i < t_data->philosophers)
 	{
-		philos[i].id = i;
-		philos[i].meals = 0;
-		philos[i].last_meal = t_data->start;
-		philos[i].data = t_data;
-		pthread_mutex_init(&philos[i].last_meal_mutex, NULL);
-		pthread_mutex_init(&philos[i].meals_mutex, NULL);
-		pthread_create(&philos[i].philo, NULL, routine, &philos[i]);
-		pthread_detach(philos[i].philo);
+		if (fork() == 0)
+		{
+			philo[i].start = get_time();
+			philo[i].last_meal = get_time();
+			philo[i].meals = 0;
+			philo[i].id = i + 1;
+			philo[i].data = t_data;
+			pthread_create(&philo[i].philo, NULL, routine, &philo[i]);
+			pthread_detach(philo[i].philo);
+			while (t_data->is_dead != 1)
+			{
+				philo[i].meals++;
+				sem_wait(forks);
+				eating(&philo[i], "has taken the forks", i);
+				sem_wait(forks);
+				eating(&philo[i], "has taken the forks", i);
+				eating(&philo[i], "is eating", i);
+				philo[i].last_meal = get_time();
+				sem_post(forks);
+				sem_post(forks);
+				ft_usleep(t_data->eat);
+				sleeping(&philo[i], i);
+				thinking(&philo[i], i);
+
+			}
+			ft_exit();
+		}
 		i++;
 	}
-	i = 0;
-	while (check_if_philo_die(philos) != 1)
-		i++;
+	while (wait(0) != -1)
+		;
 }
