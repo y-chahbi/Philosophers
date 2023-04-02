@@ -31,6 +31,10 @@ typedef struct t_philo
 	int				sleep;
 	int				must_eat;
 	int				is_dead;
+	sem_t			*death;
+	sem_t			*write;
+	sem_t			*meals;
+	sem_t			*s_dead;
 }	t_data_philo;
 
 typedef struct s_mut_philo
@@ -40,6 +44,7 @@ typedef struct s_mut_philo
 	int				meals;
 	long long		last_meal;
 	pthread_t		philo;
+	sem_t			*time;
 	t_data_philo	*data;
 }	t_philos;
 

@@ -11,9 +11,9 @@
 # **************************************************************************** #
 
 SUBJ = philo
-SRC  = philo.c philo_files/put_to_struct.c philo_files/start_philo.c philo_files/ft_isdigit.c philo_files/ft_atoi.c philo_staf/eating.c  philo_staf/sleeping.c philo_staf/get_time.c philo_staf/thinking.c philo_staf/ft_usleep.c
+SRC  = philo.c philo_files/put_to_struct.c philo_files/start_philo.c philo_files/ft_isdigit.c philo_files/ft_atoi.c philo_files/mywhile.c philo_staf/eating.c  philo_staf/sleeping.c philo_staf/get_time.c philo_staf/thinking.c philo_staf/ft_usleep.c
 CC=cc
-FLAGS=-Wall -Wextra -Werror #-fsanitize=thread -g
+FLAGS=-Wall -Wextra -Werror -fsanitize=thread -g
 RM=rm -f
 OBJ_ALL = $(SRC:.c=.o)
 

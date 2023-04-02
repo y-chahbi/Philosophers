@@ -14,22 +14,25 @@
 
 int	check_if_philo_die(t_philos *philos)
 {
-	pthread_mutex_lock(&philos->meals_mutex);
-	pthread_mutex_lock(&philos->last_meal_mutex);
-	if (philos->last_meal / philos->meals > philos->data->die)
-		philos->data->is_dead = 1;
-	if (philos->data->is_dead == 1)
+	int	all;
+
+	if (my_while(philos) == 1)
+		return (1);
+	all = -1;
+	if (philos->data->must_eat != -1)
 	{
-		pthread_mutex_lock(&philos->data->write);
-		printf("%lld %d is die\n",
-			get_time() - philos->data->start,
-			philos->id + 1);
+		while (++all < philos->data->philosophers)
+		{
+			pthread_mutex_lock(&philos[all].meals_mutex);
+			if (philos[all].meals < philos->data->must_eat)
+			{
+				pthread_mutex_unlock(&philos[all].meals_mutex);
+				return (0);
+			}
+			pthread_mutex_unlock(&philos[all].meals_mutex);
+		}
 		return (1);
 	}
-	if (philos->data->must_eat != -1 && philos->meals == philos->data->must_eat)
-		return (1);
-	pthread_mutex_unlock(&philos->last_meal_mutex);
-	pthread_mutex_unlock(&philos->meals_mutex);
 	return (0);
 }
 
@@ -37,16 +40,16 @@ void	mywhile(t_philos *philos)
 {
 	while (1)
 	{
-		philos->meals++;
 		pthread_mutex_lock(&philos->data->forks[philos->left_fork]);
 		eating(philos, "has taken a left fork");
 		pthread_mutex_lock(&philos->data->forks[philos->right_fork]);
+		pthread_mutex_lock(&philos->meals_mutex);
+		philos->meals++;
+		pthread_mutex_unlock(&philos->meals_mutex);
 		eating(philos, "has taken a right fork");
 		eating(philos, "is eating");
-		pthread_mutex_lock(&philos->meals_mutex);
-		pthread_mutex_unlock(&philos->meals_mutex);
 		pthread_mutex_lock(&philos->last_meal_mutex);
-		philos->last_meal = get_time() - philos->data->start;
+		philos->last_meal = get_time();
 		pthread_mutex_unlock(&philos->last_meal_mutex);
 		ft_usleep(philos->data->eat);
 		pthread_mutex_unlock(&philos->data->forks[philos->left_fork]);
@@ -98,7 +101,7 @@ void	start_philo(t_data_philo *t_data)
 	{
 		philos[i].id = i;
 		philos[i].meals = 0;
-		philos[i].last_meal = t_data->start;
+		philos[i].last_meal = get_time();
 		philos[i].data = t_data;
 		if (initialization(philos, i) != 0)
 			return ;

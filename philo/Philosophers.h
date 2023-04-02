@@ -56,4 +56,5 @@ void		sleeping(t_philos *philos);
 void		thinking(t_philos *philos);
 long long	get_time(void);
 void		ft_usleep(long long var);
+int			my_while(t_philos *philos);
 #endif
