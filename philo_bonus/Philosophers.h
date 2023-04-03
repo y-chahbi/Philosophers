@@ -31,10 +31,6 @@ typedef struct t_philo
 	int				sleep;
 	int				must_eat;
 	int				is_dead;
-	sem_t			*death;
-	sem_t			*write;
-	sem_t			*meals;
-	sem_t			*s_dead;
 }	t_data_philo;
 
 typedef struct s_mut_philo
@@ -43,6 +39,10 @@ typedef struct s_mut_philo
 	int				id;
 	int				meals;
 	long long		last_meal;
+	sem_t			*death;
+	sem_t			*write;
+	sem_t			*mealss;
+	sem_t			*s_dead;
 	pthread_t		philo;
 	sem_t			*time;
 	t_data_philo	*data;
@@ -58,4 +58,7 @@ void		thinking(t_philos *t_data, int id);
 long long	get_time(void);
 void		ft_usleep(long long var);
 void		ft_exit(void);
+void		puterror_exit(char *message);
+sem_t		*sem_create(char *name, unsigned int initilizer);
+void		ini(t_philos *philo, int i);
 #endif
