@@ -29,6 +29,8 @@ int	check_if_philo_die(t_philos *philos)
 				pthread_mutex_unlock(&philos[all].meals_mutex);
 				return (0);
 			}
+			else
+				return (1);
 			pthread_mutex_unlock(&philos[all].meals_mutex);
 		}
 		return (1);
@@ -41,12 +43,12 @@ void	mywhile(t_philos *philos)
 	while (1)
 	{
 		pthread_mutex_lock(&philos->data->forks[philos->left_fork]);
-		eating(philos, "has taken a left fork");
+		eating(philos, "has taken a fork");
 		pthread_mutex_lock(&philos->data->forks[philos->right_fork]);
 		pthread_mutex_lock(&philos->meals_mutex);
 		philos->meals++;
 		pthread_mutex_unlock(&philos->meals_mutex);
-		eating(philos, "has taken a right fork");
+		eating(philos, "has taken a fork");
 		eating(philos, "is eating");
 		pthread_mutex_lock(&philos->last_meal_mutex);
 		philos->last_meal = get_time();
@@ -67,7 +69,7 @@ void	*routine(void *ptr)
 	philos->left_fork = philos->id;
 	philos->right_fork = (philos->id + 1) % philos->data->philosophers;
 	if (philos->id % 2 != 0)
-		usleep(1000);
+		usleep(500);
 	mywhile(philos);
 	return (NULL);
 }

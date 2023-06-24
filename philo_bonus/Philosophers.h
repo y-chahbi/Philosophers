@@ -30,21 +30,23 @@ typedef struct t_philo
 	int				eat;
 	int				sleep;
 	int				must_eat;
+	sem_t			*write;
+	sem_t			*death;
+	sem_t			*time;
+	long long		start;
 	int				is_dead;
 }	t_data_philo;
 
 typedef struct s_mut_philo
 {
-	long long		start;
 	int				id;
 	int				meals;
 	long long		last_meal;
-	sem_t			*death;
-	sem_t			*write;
 	sem_t			*mealss;
 	sem_t			*s_dead;
+	sem_t			*lmeal;
 	pthread_t		philo;
-	sem_t			*time;
+	pid_t			pids;
 	t_data_philo	*data;
 }	t_philos;
 
@@ -61,4 +63,7 @@ void		ft_exit(void);
 void		puterror_exit(char *message);
 sem_t		*sem_create(char *name, unsigned int initilizer);
 void		ini(t_philos *philo, int i);
+void		ft_kill_all(t_philos *philo, pid_t pid, int n);
+void		ft_wait_all(t_philos *philo, pid_t pid, int n);
+void		waitandkill(t_philos *philo, t_data_philo *t_data);
 #endif

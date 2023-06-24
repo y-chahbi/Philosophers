@@ -6,7 +6,7 @@
 /*   By: ychahbi <ychahbi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 01:38:27 by ychahbi           #+#    #+#             */
-/*   Updated: 2023/04/03 01:43:41 by ychahbi          ###   ########.fr       */
+/*   Updated: 2023/06/22 23:13:14 by ychahbi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ sem_t	*sem_create(char *name, unsigned int initilizer)
 void	ini(t_philos *philo, int i)
 {
 	philo[i].s_dead = sem_create("/sem/e", 1);
-	philo[i].death = sem_create("/sem/o", 1);
-	philo[i].write = sem_create("/sem/b", 1);
 	philo[i].mealss = sem_create("/sem/c", 1);
-	philo[i].time = sem_create("/sem/d", 1);
+	philo[i].lmeal = sem_create("/sem/cd", 1);
 }

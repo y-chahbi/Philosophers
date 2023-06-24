@@ -28,12 +28,12 @@ int	main(int argc, char **argv)
 	{
 		t_data->forks = malloc(sizeof(pthread_mutex_t) * t_data->philosophers);
 		if (!t_data->forks)
-			return (printf("Malloc Error"), 0);
+			return (printf("Malloc Error"), 1);
 		index = -1;
 		while (++index < t_data->philosophers)
 		{
 			if ((pthread_mutex_init(&t_data->forks[index], NULL)))
-				return (printf("Forks Mutex Error"), 0);
+				return (printf("Forks Mutex Error"), 1);
 		}
 		start_philo(t_data);
 	}
