@@ -6,36 +6,25 @@
 /*   By: ychahbi <ychahbi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/11 01:03:39 by ychahbi           #+#    #+#             */
-/*   Updated: 2023/06/20 10:00:13 by ychahbi          ###   ########.fr       */
+/*   Updated: 2023/07/03 16:35:25 by ychahbi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../Philosophers.h"
 
-void	ft_kill_all(t_philos *philo, pid_t pid, int n)
+void	ft_kill_all(void)
 {
-	int	i;
-
-	i = 0;
-	while (n > i)
-	{
-		if (philo[i].pids != pid)
-			kill(philo->pids, SIGKILL);
-		i++;
-	}
+	kill(0, SIGINT);
 }
 
-void	ft_wait_all(t_philos *philo, pid_t pid, int n)
+void	ft_wait_all(t_philos *philo, int n)
 {
 	int	i;
-	int	status;
-	int	pids;
 
 	i = 0;
 	while (n > i)
 	{
-		if (philo[i].pids != pid)
-			pids = waitpid(pid, &status, 0);
+		kill(philo[i].pids, SIGKILL);
 		i++;
 	}
 }
@@ -47,9 +36,9 @@ void	waitandkill(t_philos *philo, t_data_philo *t_data)
 
 	pid = waitpid(-1, &status, 0);
 	if (status == EXIT_SUCCESS)
-		ft_wait_all(philo, pid, t_data->philosophers);
+		ft_wait_all(philo, t_data->philosophers);
 	else
-		ft_kill_all(philo, pid, t_data->philosophers);
+		ft_kill_all();
 }
 
 void	eating(t_philos *t_data, char *str, int id)

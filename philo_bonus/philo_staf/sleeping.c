@@ -6,7 +6,7 @@
 /*   By: ychahbi <ychahbi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/11 01:03:36 by ychahbi           #+#    #+#             */
-/*   Updated: 2023/06/20 09:44:07 by ychahbi          ###   ########.fr       */
+/*   Updated: 2023/07/02 15:04:00 by ychahbi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,5 @@ void	sleeping(t_philos *t_data, int id)
 		get_time() - (*t_data).data->start,
 		id + 1);
 	sem_post(t_data->data->write);
-	ft_usleep(t_data->data->sleep);
+	ft_usleep(t_data, t_data->data->sleep, id);
 }

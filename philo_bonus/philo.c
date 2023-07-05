@@ -19,7 +19,6 @@ int	main(int argc, char **argv)
 	t_data = malloc(sizeof(t_data_philo));
 	t_data->args = argv;
 	t_data->argc = argc;
-	t_data->death = sem_create("/sem/o", 1);
 	t_data->write = sem_create("/sem/b", 1);
 	t_data->time = sem_create("/sem/tm", 1);
 	t_data->start = get_time();
